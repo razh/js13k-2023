@@ -1,0 +1,35 @@
+{
+  "name": "js13k-2023",
+  "private": true,
+  "version": "0.0.0",
+  "description": "https://razh.github.io/js13k-2023",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razh/js13k-2023.git"
+  },
+  "author": "razh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/razh/js13k-2023/issues"
+  },
+  "homepage": "https://github.com/razh/js13k-2023#readme",
+  "devDependencies": {
+    "eslint": "8.47.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "prettier": "3.0.2",
+    "vite": "4.4.5"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
+}
