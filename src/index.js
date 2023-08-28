@@ -1,5 +1,14 @@
 /* global canvas */
 
+import { camera_create } from './camera.js';
+import { drawGrass } from './grass.js';
+import {
+  createShaderProgram,
+  getAttributeLocations,
+  getUniformLocations,
+  setMat4Uniform,
+} from './shader.js';
+
 var gl = /** @type {WebGL2RenderingContext} */ (canvas.getContext('webgl2'));
 
 gl.clearColor(0, 0, 0, 0);
@@ -8,6 +17,63 @@ gl.enable(gl.CULL_FACE);
 gl.depthFunc(gl.LEQUAL);
 
 var running = false;
+
+// Scene
+
+// Camera
+var camera = camera_create();
+
+// Shader
+var grassProgram = createShaderProgram(
+  gl,
+  `
+#version 300 es
+
+precision highp float;
+precision highp int;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform sampler2D map;
+
+in vec3 position;
+in vec2 uv;
+
+out vec2 vUv;
+
+void main() {
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+}
+`,
+  `
+#version 300 es
+
+precision highp float;
+precision highp int;
+
+in vec2 vUv;
+
+out vec4 color;
+
+void main() {
+
+}
+`,
+);
+
+var grassAttributes = getAttributeLocations(gl, grassProgram);
+var grassUniforms = getUniformLocations(gl, grassProgram);
+
+var grassTexture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, grassTexture);
+gl.texImage2D(
+  gl.TEXTURE_2D,
+  0,
+  gl.RGBA,
+  gl.RGBA,
+  gl.UNSIGNED_BYTE,
+  drawGrass(),
+);
 
 var dt = 1 / 60;
 var accumulatedTime = 0;
@@ -29,7 +95,11 @@ var update = () => {
   }
 };
 
-var render = () => {};
+var render = () => {
+  setMat4Uniform(gl);
+};
+
+render();
 
 var animate = () => {
   update();
