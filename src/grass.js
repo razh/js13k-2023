@@ -1,5 +1,13 @@
-import { clamp, randFloat, randFloatSpread } from './math.js';
-import { vec3_create, vec3_setLength } from './vec3.js';
+import { clamp, mapLinear, randFloat, randFloatSpread } from './math.js';
+import {
+  vec3_add,
+  vec3_addScaledVector,
+  vec3_addVectors,
+  vec3_clone,
+  vec3_create,
+  vec3_multiplyScalar,
+  vec3_setLength,
+} from './vec3.js';
 
 var size = 512;
 
@@ -41,28 +49,79 @@ export var drawGrass = () => {
   return canvas;
 };
 
-var grass_create = () => {
+// https://github.com/James-Smyth/three-grass-demo
+export var grass_create = () => {
+  var size = 32;
   var count = 1000;
+  var bladeWidth = 0.1;
+  var tipOffset = 0.1;
 
-  var positions = new Float32Array(count * 3);
-  var uvs = new Float32Array(count * 2);
-  var indices = new Uint16Array(count);
+  var positions = /** @type {Vector3[]} */ [];
+  var uvs = /** @type {number[]} */ [];
+  var indices = /** @type {number[]} */ [];
 
   for (var i = 0; i < count; i++) {
-    var x = randFloatSpread(2);
-    var y = randFloatSpread(2);
-    var z = randFloatSpread(2);
-
     var height = randFloat(0.5, 1);
-    var yaw = Math.random() * Math.PI * 2;
+    var theta = 2 * Math.PI * Math.random();
+    var radius = (size / 2) * Math.sqrt(Math.random());
+    var x = radius * Math.cos(theta);
+    var z = radius * Math.sin(theta);
 
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
+    var position = vec3_create(Math.cos(theta), 0, Math.sin(theta));
 
-    uvs[i * 2] = (x + 1) / 2;
-    uvs[i * 2 + 1] = (y + 1) / 2;
+    var yaw = 2 * Math.PI * Math.random();
+    var yawVector = vec3_create(Math.sin(yaw), 0, -Math.cos(yaw));
 
-    indices[i] = i;
+    var tipBend = 2 * Math.PI * Math.random();
+    var tipBendVector = vec3_create(Math.sin(tipBend), 0, -Math.cos(tipBend));
+
+    var bottomLeft = vec3_multiplyScalar(
+      vec3_add(vec3_clone(position), yawVector),
+      -bladeWidth / 2,
+    );
+
+    var bottomRight = vec3_multiplyScalar(
+      vec3_add(vec3_clone(position), yawVector),
+      bladeWidth / 2,
+    );
+
+    var topLeft = vec3_multiplyScalar(
+      vec3_add(vec3_clone(position), yawVector),
+      -bladeWidth / 4,
+    );
+    topLeft.y += height / 2;
+
+    var topRight = vec3_multiplyScalar(
+      vec3_add(vec3_clone(position), yawVector),
+      bladeWidth / 4,
+    );
+    topRight.y += height / 2;
+
+    var topCenter = vec3_multiplyScalar(
+      vec3_add(vec3_clone(position), tipBendVector),
+      tipOffset,
+    );
+    topCenter.y += height;
+
+    var u = mapLinear(x, -size / 2, size / 2, 0, 1);
+    var v = mapLinear(z, -size / 2, size / 2, 0, 1);
+
+    positions.push(bottomLeft, bottomRight, topLeft, topRight, topCenter);
+
+    for (var j = 0; j < 5; j++) {
+      uvs.push(u, v);
+    }
+
+    indices.push(
+      offset,
+      offset + 1,
+      offset + 2,
+      offset + 2,
+      offset + 4,
+      offset + 3,
+      offset + 3,
+      offset,
+      offset + 2,
+    );
   }
 };
