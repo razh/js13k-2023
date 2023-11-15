@@ -1,8 +1,6 @@
 import { clamp, mapLinear, randFloat, randFloatSpread } from './math.js';
 import {
   vec3_add,
-  vec3_addScaledVector,
-  vec3_addVectors,
   vec3_clone,
   vec3_create,
   vec3_multiplyScalar,
@@ -55,6 +53,7 @@ export var grass_create = () => {
   var count = 1000;
   var bladeWidth = 0.1;
   var tipOffset = 0.1;
+  var vertexCount = 5;
 
   var positions = /** @type {Vector3[]} */ [];
   var uvs = /** @type {number[]} */ [];
@@ -67,7 +66,7 @@ export var grass_create = () => {
     var x = radius * Math.cos(theta);
     var z = radius * Math.sin(theta);
 
-    var position = vec3_create(Math.cos(theta), 0, Math.sin(theta));
+    var position = vec3_create(x, 0, z);
 
     var yaw = 2 * Math.PI * Math.random();
     var yawVector = vec3_create(Math.sin(yaw), 0, -Math.cos(yaw));
@@ -108,9 +107,11 @@ export var grass_create = () => {
 
     positions.push(bottomLeft, bottomRight, topLeft, topRight, topCenter);
 
-    for (var j = 0; j < 5; j++) {
+    for (var j = 0; j < vertexCount; j++) {
       uvs.push(u, v);
     }
+
+    var offset = i * vertexCount;
 
     indices.push(
       offset,

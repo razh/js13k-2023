@@ -39,9 +39,13 @@ uniform sampler2D map;
 in vec3 position;
 in vec2 uv;
 
+out vec3 vPosition;
 out vec2 vUv;
 
 void main() {
+  vPosition = position;
+  vUv = uv;
+
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 }
 `,
@@ -51,12 +55,15 @@ void main() {
 precision highp float;
 precision highp int;
 
+in vec2 vPosition;
 in vec2 vUv;
 
 out vec4 color;
 
-void main() {
+vec3 green = vec3(0.2, 0.6, 0.3);
 
+void main() {
+  color = vec4(mix(green * 0.7, green, vPosition.y), 1.0);
 }
 `,
 );

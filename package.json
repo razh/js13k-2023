@@ -19,6 +19,9 @@
     "url": "https://github.com/razh/js13k-2023/issues"
   },
   "homepage": "https://github.com/razh/js13k-2023#readme",
+  "dependencies": {
+    "simplex-noise": "4.0.1"
+  },
   "devDependencies": {
     "eslint": "8.47.0",
     "eslint-config-prettier": "9.0.0",
